@@ -1,0 +1,92 @@
+See paper chapter VII.B, last paragraph
+
+
+ARM registers
+=============
+
+r0-r12: General Purpose Register
+r13: stack pointer
+r14: link register (return address)
+r15: program counter
+PSR: program status register
+
+Condition Flags: 
+N 	1 result of operation was negative
+	0 otherwise
+Z	1 result of operation was zero
+	0 otherwise
+C	1 operation resulted in carry (unsigned) 
+	0 otherwise 
+V	1 operation caused overflow (signed operations) 
+	0 otherwise
+
+Program code
+============
+
+	...					
+	1: ...					
+	beq 1b\r\n		BNE 11010001(cond)--------(offset), branch if Z clear
+
+Change from beq to bne: The loop is left with the following register dump
+
+Register dump
+=============
+
+xPSR: 0x60000000 	(N:0, Z:1, C:1, V:0) 
+r0  : 0x00000000	(r0: 0) 
+r1  : 0x00000010 	
+r2  : 0x40022000 	
+r3  : 0x00000021 
+r4  : 0x40021000 
+r5  : 0x48000000 
+r6  : 0x00000001
+r7  : 0x40013800
+r8  : 0x00080000
+r9  : 0x00000002
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x0800040C
+
+
+further register dumps are identical to first dump
+
+xPSR: 0x60000000
+r0  : 0x00000000
+r1  : 0x00000010
+r2  : 0x40022000
+r3  : 0x00000021
+r4  : 0x40021000
+r5  : 0x48000000
+r6  : 0x00000001
+r7  : 0x40013800
+r8  : 0x00080000
+r9  : 0x00000002
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x0800040C
+
+
+xPSR: 0x60000000
+r0  : 0x00000000
+r1  : 0x00000010
+r2  : 0x40022000
+r3  : 0x00000021
+r4  : 0x40021000
+r5  : 0x48000000
+r6  : 0x00000001
+r7  : 0x40013800
+r8  : 0x00080000
+r9  : 0x00000002
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x0800040C
+

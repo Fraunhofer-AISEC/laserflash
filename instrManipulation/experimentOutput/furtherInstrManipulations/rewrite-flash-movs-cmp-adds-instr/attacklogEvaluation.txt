@@ -1,0 +1,976 @@
+See paper chapter VII.B
+
+
+ARM registers
+=============
+
+r0-r12: General Purpose Register
+r13: stack pointer
+r14: link register (return address)
+r15: program counter
+PSR: program status register
+
+Condition Flags: 
+N 	1 result of operation was negative
+	0 otherwise
+Z	1 result of operation was zero
+	0 otherwise
+C	1 operation resulted in carry
+	0 otherwise 
+V	1 operation caused overflow
+	0 otherwise
+
+
+Program code
+============
+
+We first load the values 0,1,2,4,8,16,64 and 128 into registers r0 to r7. Then we add all those registers to r0, starting with r0 to r7.
+Finally, we compare r0 to 0xDF which is the correct/expected result. If equal, we jump to the top of the loop, else, we leave the loop and dump the registers.
+Since the thumb instruction set is only 16-bit long, only half of the instructions can be hit by the laser.
+
+
+Register dump
+=============
+
+xPSR: 0x20000000	(N:0, Z:0, C:1, V:0)
+r0  : 0x000000FF	(fault added to 0xDF)
+r1  : 0x00000001	(ok)
+r2  : 0x00000002	(ok)
+r3  : 0x00000004	(ok)
+r4  : 0x00000028	(fault in movs r4, #8, value 0x20 was added)
+r5  : 0x00000010	(ok)
+r6  : 0x00000040	(ok)
+r7  : 0x00000080	(ok)
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000	
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000028	(fault: movs r4, #8, value 0x20 was added)
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000	(N:0, Z:0, C:1, V:0)
+r0  : 0x00000118	(multi bit fault: either adds r0, r0, r4 was changed to adds r0, r6, r4 (2 bit fault) or adds r0, r0, r2 was changed to adds r0, r6, r3 (3 bit fault))
+r1  : 0x00000001	(ok)
+r2  : 0x00000002	(ok)
+r3  : 0x00000004	(ok)
+r4  : 0x00000008	(ok)
+r5  : 0x00000010	(ok)
+r6  : 0x00000040	(ok)
+r7  : 0x00000080	(ok)
+r8  : 0x00080000
+r9  : 0x00000118
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000022	(fault: movs r2, #2, value 0x20 was added)
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000028	(fault: movs r4, #8, value 0x20 was added)
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x0000011E	(multi bit fault: adds r0, r0, r2 was changed to adds r0, r6, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011E
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004	
+r4  : 0x00000028	(fault: movs r4, #8, value 0x20 was added)
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x0000011F	(multi bit fault: adds r0, r0, r0 was changed to adds r0, r6, r0)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011F
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x00000140	(3 bit fault: adds r0, r0, r6 was changed to adds r0, r6, r7)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x00000140
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF	
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000060	(fault: movs r6, #64, value 0x20 was added)
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x00000100	(multi bit fault: adds r0, r0, r6 was changed to adds r0, r6, r6)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x00000100
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000022	(fault: movs r2, #2, value 0x20 was added)
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000028	(fault: movs r4, #8, value 0x20 was added)
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E0	(fault: adds r0, r0, r4 was changed to adds r0, r4, r4 or adds r0, r0, r0 was changed to adds r0, r0, r1)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E0
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x0000011F	(multi bit fault: adds r0, r0, r0 was changed to adds r0, r6, r0)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011F
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E6	(fault: adds r0, r0, r2 was changed to adds r0, r4, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E6
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000060	(fault: movs r6, #64, value 0x20 was added)
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000022	(fault: movs r2, #2, value 0x20 was added)
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E0	(fault: adds r0, r0, r4 was changed to adds r0, r4, r4 or adds r0, r0, r0 was changed to adds r0, r0, r1)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E0
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x0000011E	(multi bit fault: adds r0, r0, r2 was changed to adds r0, r6, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011E
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000022	(fault: movs r2, #2, value 0x20 was added)
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E7	(fault: adds r0, r0, r0 was changed to adds r0, r4, r0)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E7
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000022	(fault: movs r2, #2, value 0x20 was added)
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x0000011F	(multi bit fault: adds r0, r0, r0 was changed to adds r0, r6, r0)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011F
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E6	(fault: adds r0, r0, r2 was changed to adds r0, r4, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E6
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000060	(fault: movs r6, #64, value 0x20 was added)
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000022	(fault: movs r2, #2, value 0x20 was added)
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E6	(fault: adds r0, r0, r2 was changed to adds r0, r4, r2)	
+r1  : 0x00000001	
+r2  : 0x00000002	
+r3  : 0x00000004	
+r4  : 0x00000008	
+r5  : 0x00000010	
+r6  : 0x00000040	
+r7  : 0x00000080	
+r8  : 0x00080000
+r9  : 0x000000E6
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000028	(fault: movs r4, #8, value 0x20 was added)
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E7	(fault: adds r0, r0, r0 was changed to adds r0, r4, r0)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E7
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000060	(fault: movs r6, #64, value 0x20 was added)
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E6	(fault: adds r0, r0, r2 was changed to adds r0, r4, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E6
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x00000100	(multi bit fault: adds r0, r0, r6 was changed to adds r0, r6, r6)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x00000100
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x0000011E	(multi bit fault: adds r0, r0, r2 was changed to adds r0, r6, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011E
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000060	(fault: movs r6, #64, value 0x20 was added)
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000
+r0  : 0x000000E7	(fault: adds r0, r0, r0 was changed to adds r0, r4, r0 or adds r0, r0, r4 was changed to adds r0, r0, r5)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E7
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x80000000	(N:1, Z:0, C:0, V:0 => fault: cmp r0, 0xDF)
+r0  : 0x000000DF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000DF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x80000000	(N:1, Z:0, C:0, V:0 => fault: cmp r0, 0xDF)
+r0  : 0x000000DF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000DF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x80000000	(N:1, Z:0, C:0, V:0 => fault: cmp r0, 0xDF)
+r0  : 0x000000DF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000DF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x20000000	
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000060	(fault: movs r6, #64, value 0x20 was added)
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+xPSR: 0x80000000	(N:1, Z:0, C:0, V:0 => fault: cmp r0, 0xDF)
+r0  : 0x000000DF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000DF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x000000E0	(fault: adds r0, r0, r4 was changed to adds r0, r4, r4)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E0
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x80000000	(N:1, Z:0, C:0, V:0 => fault: cmp r0, 0xDF)
+r0  : 0x000000DF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000DF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x0000011F	(multi bit fault: adds r0, r0, r0 was changed to adds r0, r6, r0 or shifted fault adds r0, r0, r6 to adds r0, r0, r7)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x0000011F
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x00000100	(multi bit fault: adds r0, r0, r6 was changed to adds r0, r6, r6)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x00000100
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x80000000	(N:1, Z:0, C:0, V:0 => fault: cmp r0, 0xDF)
+r0  : 0x000000DF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000DF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x000000FF
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000028	(fault: movs r4, #8, value 0x20 was added)
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000FF
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x000000E6	(fault: adds r0, r0, r2 was changed to adds r0, r4, r2)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E6
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+
+
+xPSR: 0x20000000
+r0  : 0x000000E7	(fault: adds r0, r0, r0 was changed to adds r0, r4, r0 or shifted fault adds r0, r0, r4 to adds r0, r0, r5)
+r1  : 0x00000001
+r2  : 0x00000002
+r3  : 0x00000004
+r4  : 0x00000008
+r5  : 0x00000010
+r6  : 0x00000040
+r7  : 0x00000080
+r8  : 0x00080000
+r9  : 0x000000E7
+r10 : 0x00000020
+r11 : 0xFFFFFFFF
+r12 : 0xFFFFFFFF
+r13 : 0x20001F60
+r14 : 0x00080000
+r15 : 0x08000440
+
+

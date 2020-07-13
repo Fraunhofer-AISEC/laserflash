@@ -1,0 +1,75 @@
+See paper chapter VII.A (AES Round Skip)
+
+Results:
+
+/experiment/00008/result/aesCiphertext Dataset {1, 1}
+    Data:
+        (0,0) "BB36C7EB88334D49A4E7112E74F182C4"
+
+
+
+(r3 is a general purpose register)
+(r7 is the pointer to the AES state in SRAM (0x20000050 at the end of each round (starts at 0x20000040)))
+(r9 is the loop counter and pointer to the current round key in SRAM/stack) 
+
+Unmodified ASM Code with values for Round 9 (second-last round):
+
+ROUNDSTART:
+	...
+	AES computation
+	...
+	0x08000938      469a           mov r10, r3	; copy r3 (=16) into r10; r10 = 16
+	0x0800093a      9b00           ldr r3, [sp]	; fetch loop limit/maximum loop pointer from stack; r3 = 0x20001FB0
+	0x0800093c      44d1           add r9, r10	; increment loopcounter/pointer by 16 (r10); r9 = 0x20001FA0 + 16
+	0x0800093e      454b           cmp r3, r9	; check if all rounds have been completed by comparing r9 and r3 (0x20001FB0 vs 0x20001FB0)
+	0x08000940      d300           blo AESFINISHED	; if r3 < r9 -> goto AESFINISHED (FALSE)
+	0x08000942      e777           b ROUNDSTART	; else -> Continue with next round
+AESFINISHED:
+	... return ...
+
+--------------------------------------
+
+modified code (reconstructed):
+
+ROUNDSTART:
+	...
+	AES computation
+	...
+!!!	0x08000938      46ba           mov r10, r7	; copy 0x20000050 (r7) into r10; r10 = 0x20000050
+	0x0800093a      9b00           ldr r3, [sp]	; fetch loop limit/maximum loop pointer from stack; r3 = 0x20001FB0
+	0x0800093c      44d1           add r9, r10	; increment loopcounter/pointer by 16 (r10); r9 = 0x20001FA0 + 0x20000050 = 0x40001FF0
+	0x0800093e      454b           cmp r3, r9	; check if all rounds have been completed r3 =/= r9 (0x20001FB0 vs. 0x40001FF0)
+	0x08000940      d300           blo AESFINISHED	; if r3 < r9 -> goto AESFINISHED (TRUE)
+	0x08000942      e777           b ROUNDSTART	; else -> Continue with next round
+AESFINISHED:
+	... return ...
+
+--> early exit from AES after round 9. Round 10 is skipped.
+--> note: we replaced a usual integer with a very large pointer!
+
+
+
+9 = 1001
+b = 1101
+
+469a = 0100 0110 1001 1010 --> mov r10, r3
+46ba = 0100 0110 1011 1010 --> mov r10, r7
+
+           OP   M  S   D
+469a = 01000110 10 011 010 --> mov r10, r3
+46ba = 01000110 10 111 010 --> mov r10, r7
+
+OP: MOV
+M: Low-Reg (r0-r7) to High-Reg (r8-r15)
+S: r3/r7
+D: r10
+
+           OP    S    D
+469a = 010001101 0011 010 --> mov r10, r3
+46ba = 010001101 0111 010 --> mov r10, r7
+
+OP: MOV Low-Reg (r0-r7) to High-Reg (r8-r15)
+S: value = r3/r7
+D: value + 8 = r10
+
+
