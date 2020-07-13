@@ -1,0 +1,42 @@
+All experiments are stored in .h5 files.
+- denotes a group
+# denotes a dataset
+
+
+- config: Experiment Configuration
+	- attackboard: Configuration of the attack control board
+		# build: Build-Timestamp of the attack control board firmware
+		# uniqueId: "Unique ID" of the STM32F0 microcontroller on the attack control board
+	# baud: baud rate for communication
+	# cleanClosed: 1 if all data has been written and the file has been closed correctly
+	# cooldown: (additional) pause between experiments in seconds
+	- dut: Configuration of the DuT
+		# build: Build-Timestamp of the DuT firmware
+		# experiment: Experiment running on the DuT
+		# uniqueId: "Unique ID" of the STM32F0 microcontroller on the DuT
+	# evaluated: 1 if the file contains evaluated data in the "eval" group
+	# serial: Serial port used in communication
+
+- eval: Summarized evalation data
+	# faultList: Experiment IDs (format: %05i) of successfull fault injections
+
+- experiment: Experiment data, including input and output data
+	- (Multiple Experiment IDs in %05i format): Experiment ID/experiment run for a single LFI attack execution.
+		- env: Environmental data of the DuT, included for debugging purposes
+			# temp: raw temperature data (to be ignored)
+			# vref: raw supply voltage data (to be ignored)
+		- eval: Evaluation of the experiment
+			# faultindex: Faulted transaction in DMA experiment, unused for AES
+			# faults: Number of detected faults in the experiment. 0 if not fault was observed.
+		- result (for AES experiment): Input and Output data of the AES experiment
+			# aesCiphertext: AES data/ciphertext output. This data contains the fault!
+			# aesKey: AES key input
+			# aesPlaintext: AES data/plaintext input
+		- result (for DMA experiment): Input and output data of the DMA experiment
+			# dma: data copied from flash memory to SRAM by the DMA. This data contains the faults!
+			# inPattern: original data-word which is read from flash memory by the DMA
+		- trigger: Low-Level trigger-time control. Trigger-time = value * 20.8ns.
+			# Q: Laser Q-Switch trigger
+			# algo: DuT algorithm trigger
+			# laser: Laser Flash Lamp trigger
+			# scope: Oscilloscope trigger (to be ignored)
